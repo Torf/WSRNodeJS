@@ -1,0 +1,15 @@
+{
+  "cron" : [
+    { 
+      "name" : "calendar.js",
+      "time" : "0 */5 * * * *",
+      "url"  : "https://www.google.com/calendar/feeds/.../full?alt=json"
+    }
+  ],
+  
+  "module" : {
+    "calendar" : {
+      "url"  : "https://www.google.com/calendar/feeds/.../full?alt=json"
+    }  
+  }
+}
