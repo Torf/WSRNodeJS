@@ -15,6 +15,12 @@ local.properties
 .classpath
 .settings/
 .loadpath
+NodeJS/
+PhantomJS/
+script/wsrnode.prop
+script/overview.docx
+README/SayStatic/
+README/ScanSoftTTS/
 
 # External tool builders
 .externalToolBuilders/

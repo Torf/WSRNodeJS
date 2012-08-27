@@ -66,6 +66,7 @@ var login = function(email, password, callback){
  * @param path the url to open
  */
 var addEvent = function(event, path){
+  console.log(event);
   
   var POST = {
     "data": {
@@ -152,7 +153,7 @@ var matchEntry = function(entry, options){
   // Check reminder
   if (options.reminder){
     var now_ms   = (new Date()).getTime();
-    var rmdr_ms  = reminder.minutes ? 1000*60*reminder.minutes : 1000*60*60*reminder.hours;
+    var rmdr_ms  = reminder.minutes ? 1000*60*reminder.minutes : reminder.hours ? 1000*60*60*reminder.hours : 0;
     if (start_ms - rmdr_ms > now_ms || now_ms > start_ms){ return false; }
   }
   
@@ -241,34 +242,89 @@ exports.cron = function(callback, task){
 
 
 exports.action = function(data, callback, config){
-  if (!config.module.calendar.url){
+  // Retrieve config
+  config = config.module.calendar;
+  if (!config.url){
     console.log("Missing Calendar URL");
     return;
   }
   
-  var start = moment();
-  var end   = moment().eod();
-  var msg   = "Aujourd'hui";
-   
-  if (data.date == 'tomorrow'){
-    start = start.add('days', 1).sod();
-    end   =   end.add('days', 1);
-    msg   = "Demain";
+  // Add calendar event
+  if (data.dictation){
+    
+    var title    = data.dictation;
+    var details  = config.details;
+    var location = config.location;
+    var start    = moment();
+    
+    console.log(data);
+    // Set an other date
+    if (data.Day && data.Month && data.Year){
+      start.year(data.Year);
+      start.month(data.Month-1);
+      start.date(data.Day);
+      start.hours(config.startDay);
+      start.minutes(0);
+      start.seconds(0);
+    }
+    
+    // Set an other time
+    if (data.Hour || data.minute){
+      if (data.relativeTime){ // Relative time (in x minutes)
+        start.add('hours'  ,data.AlternateHour || 0);
+        start.add('minutes',data.minute || 0);
+        details = 'Rappel de ' + start.fromNow(moment());
+      } else {
+        start.hours(data.Hour);
+        start.minutes(data.minute);
+      }
+    }
+    
+    var end = start.clone(); 
+    
+    // Short event have hours/minute otherwise it is until the end of day
+    if (data.Hour || data.minute){
+      end.add('minutes', data.relativeTime ? config.endMemo : config.endShort);
+    } else {
+      end.hours(config.endDay);
+    }
+    
+    addCalendarEvent(config.email, config.password,{
+      'title'    : title,
+      'details'  : details,
+      'location' : location,
+      'start'    : start.format('YYYY-MM-DDTHH:mm:ss'),
+      'end'      : end.format('YYYY-MM-DDTHH:mm:ss')
+    });
+    
+    callback({"tts" : ("J'ai rajouté " + start.calendar() + " l'évènement: " + data.dictation) }); 
   }
   
-  checkCalendar(config.module.calendar.url, function(events){
-    if (events.length > 0){
-      callback({"tts" : msg + ": " + events.join('. ')});
-    } 
-    else { 
-      callback({"tts" : "Il n'y a aucun évènement de prévu "+msg }); 
+  // Check calendar
+  else {
+  
+    var start = moment();
+    var end   = moment().eod();
+    var msg   = "Aujourd'hui";
+     
+    if (data.date == 'tomorrow'){
+      start = start.add('days', 1).sod();
+      end   =   end.add('days', 1);
+      msg   = "Demain";
     }
-  }, { 
-    "time"  : true,
-    "start" : start.valueOf(),
-    "end"   : end.valueOf()
-  });
+    
+    checkCalendar(config.url, function(events){
+      if (events.length > 0){
+        callback({"tts" : msg + ": " + events.join('. ')});
+      } 
+      else { 
+        callback({"tts" : "Il n'y a aucun évènement de prévu "+msg }); 
+      }
+    }, { 
+      "time"  : true,
+      "start" : start.valueOf(),
+      "end"   : end.valueOf()
+    });
+  
+  }
 }
-
-
-
