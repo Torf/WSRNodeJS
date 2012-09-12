@@ -24,7 +24,11 @@ var cronback = function(options){
 }
 
 var startJob = function(task){
-
+  if (!task.name || !task.time){
+    console.log('Missing task name or time properties');
+    return;
+  }
+  
   var module = require('./'+task.name);
   console.log('Starting CRON Job for ' + task.name + ' at ' + task.time);
   
@@ -59,11 +63,19 @@ var url   = require('url');
 var qs    = require('querystring');
 
 
+
 var listener = function (req, res) {
   console.log('Request: ' + req.url);
    
   // Skip kludge
   if (req.url.indexOf('favicon.ico') > 0){ return; }
+  
+  // Upload
+  if (req.url == '/upload' && req.method.toLowerCase() == 'post') {
+    var upload = require('./lib/upload.js');
+    upload.action(req, res, config);
+    return;
+  }
   
   // Parse URL
   var rUrl = url.parse(req.url);
@@ -101,6 +113,6 @@ var listener = function (req, res) {
 
 
 var server = http.createServer(listener);
-server.listen(8080, "127.0.0.1");
+server.listen(config.http.port, config.http.ip);
 
-console.log('Server running on http://127.0.0.1:8080');
+console.log('Server running on http://'+config.http.ip+':'+config.http.port);

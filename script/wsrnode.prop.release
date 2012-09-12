@@ -1,15 +1,47 @@
 {
+  "http" : {
+    "ip"        : "192.168.0.[FIXME]",
+    "port"      : 8080,
+    "upload"    : "E:\\Dropbox\\Public\\[FIXME]\\"
+  },
+  
   "cron" : [
     { 
-      "name" : "calendar.js",
-      "time" : "0 */5 * * * *",
-      "url"  : "https://www.google.com/calendar/feeds/.../full?alt=json"
+      "name"    : "calendar.js",
+      "time"    : "0 */5 * * * *",
+      "url"     : "https://www.google.com/calendar/feeds/[FIXME]%40gmail.com/private-[FIXME]/full?alt=json"
+    },
+    {
+      "name"    : "feed.js",
+      "time"    : "0 */5 * * * *",
+      "feed"    : "feed.rss",
+      "folder"  : "E:\\Dropbox\\Public\\[FIXME]\\",
+      "url"     : "http://dl.dropbox.com/u/[FIXME]/"
     }
   ],
   
   "module" : {
-    "calendar" : {
-      "url"  : "https://www.google.com/calendar/feeds/.../full?alt=json"
-    }  
+    "calendar" :   {
+      "url"        : "https://www.google.com/calendar/feeds/[FIXME]%40gmail.com/private-[FIXME]/full?alt=json",
+      "email"      : "[FIXME]@gmail.com",
+      "password"   : "[FIXME]",
+      "details"    : "évènement généré",
+      "location"   : "",
+      "startDay"   :  9, 
+      "endDay"     : 18, 
+      "endShort"   : 60,
+      "endMemo"    :  5, 
+      "reminder"   : 30  
+    },
+    
+    "karotz":      {
+      "ip"         : "192.168.0.[FIXME]"
+    },
+    
+    "eedomus":     {
+      "api_url"    : "http://api.eedomus.com/set?action=periph.value",
+      "api_user"   : "[FIXME]",
+      "api_secret" : "[FIXME]"
+    }
   }
 }
