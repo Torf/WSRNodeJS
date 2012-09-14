@@ -103,10 +103,10 @@ page.open(encodeURI(url + options.place + '.html'), function (status) {
       
       if (movie){
         var hours = $(movie).closest('B').siblings('DIV').html();
-            hours = hours.replace(/<br>/g,'. ').replace(/Lun /g,'Lundi ')
-                         .replace(/Mar /g,'Mardi ').replace(/Mer /g,'Mercredi ')
-                         .replace(/Jeu /g,'Jeudi ').replace(/Ven /g,'Vendredi ')
-                         .replace(/Sam /g,'Samedi ').replace(/Dim /g,'Dimanche ');
+            hours = hours.replace(/<br>/g,'. ').replace(/Lun[-,]* /g,'Lundi ')
+                         .replace(/Mar[-,]* /g,'Mardi ').replace(/Mer[-,]* /g,'Mercredi ')
+                         .replace(/Jeu[-,]* /g,'Jeudi ').replace(/Ven[-,]* /g,'Vendredi ')
+                         .replace(/Sam[-,]* /g,'Samedi ').replace(/Dim[-,]* /g,'Dimanche ');
         
         var movie = $(movie).text();
         results.tts = 'Voici les horaires pour '+movie+' au '+theatre+' : '+hours;
