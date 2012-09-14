@@ -14,7 +14,7 @@ exports.action = function(data, callback, config){
   url += '&periph_id='+data.periphId;
   url += '&value='+data.periphValue;
   
-  console.log('URL:' + url);
+  // console.log('URL:' + url);
   
   // Send Request
   var request = require('request');
